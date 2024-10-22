@@ -36,7 +36,7 @@ class VpnApp : Application(), Application.ActivityLifecycleCallbacks {
         val net = MutableLiveData(false)
 
         fun toFoxPrint(message: String) {
-            Log.e("fox", message)
+//            Log.e("fox", message)
         }
 
         var foxBehindTime: Long = 0
@@ -109,6 +109,8 @@ class VpnApp : Application(), Application.ActivityLifecycleCallbacks {
                 CoroutineScope(Dispatchers.IO).launch {
                     true.foxLoadFb()
                 }
+                toFoxPrint("hot launch")
+                StartActivity.hot = true
                 activity.startActivity(Intent(activity, StartActivity::class.java))
             }
             false -> {}

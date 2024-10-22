@@ -1,11 +1,8 @@
 package com.vpn.fox.utils
 
 import android.util.Base64
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
-import com.github.shadowsocks.bg.Executable
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.vpn.fox.VpnApp
@@ -123,57 +120,57 @@ object FoxFbManager {
         parseDaon(daon.ifEmpty { LOCAL_DAON })
         parsePeiHr(peihr.ifEmpty { LOCAL_PEIHR })
         parseAiec(aiec.ifEmpty { LOCAL_AIEC })
-//        try {
-//            Firebase.remoteConfig.apply {
-//                fetchAndActivate()
-//                    .addOnCompleteListener {
-//                        this.getString("fm_ads").also {
-//                            if (it.isNotEmpty()) {
-//                                fm_ads = it
-//                            }
-//                            val result = fm_ads.ifEmpty { LOCAL_FM_ADS }
-//                            parseFmAds(result)
-//                        }
-//                        this.getString("daon").also {
-//                            if (it.isNotEmpty()) {
-//                                daon = it
-//                            }
-//                            val result = daon.ifEmpty { LOCAL_DAON }
-//                            parseDaon(result)
-//                            if (usvt.isNotEmpty()) {
-//                                FacebookSdk.setApplicationId(usvt)
-//                                FacebookSdk.sdkInitialize(VpnApp.app.applicationContext)
-//                                AppEventsLogger.activateApp(VpnApp.app)
-//                            }
-//                        }
-//                        this.getString("peihr").also {
-//                            if (it.isNotEmpty()) {
-//                                peihr = it
-//                            }
-//                            val result = peihr.ifEmpty { LOCAL_PEIHR }
-//                            parsePeiHr(result)
-//                        }
-//                        this.getString("aiec").also {
-//                            if (it.isNotEmpty()) {
-//                                aiec = it
-//                            }
-//                            val result = aiec.ifEmpty { LOCAL_AIEC }
-//                            parseAiec(result)
-//                        }
-//                        foxFbDataLoadedFinished = true
-//                    }
-//                    .addOnFailureListener {
-//                        if (this@foxLoadFb) {
-//                            //加载失败，则再加载一次
-//                            false.foxLoadFb()
-//                        }
-//                    }
-//            }
-//        } catch (e: Exception) {
-//            if (this@foxLoadFb) {
-//                //加载失败，则再加载一次
-//                false.foxLoadFb()
-//            }
-//        }
+        try {
+            Firebase.remoteConfig.apply {
+                fetchAndActivate()
+                    .addOnCompleteListener {
+                        this.getString("fm_ads").also {
+                            if (it.isNotEmpty()) {
+                                fm_ads = it
+                            }
+                            val result = fm_ads.ifEmpty { LOCAL_FM_ADS }
+                            parseFmAds(result)
+                        }
+                        this.getString("daon").also {
+                            if (it.isNotEmpty()) {
+                                daon = it
+                            }
+                            val result = daon.ifEmpty { LOCAL_DAON }
+                            parseDaon(result)
+                            if (usvt.isNotEmpty()) {
+                                FacebookSdk.setApplicationId(usvt)
+                                FacebookSdk.sdkInitialize(VpnApp.app.applicationContext)
+                                AppEventsLogger.activateApp(VpnApp.app)
+                            }
+                        }
+                        this.getString("peihr").also {
+                            if (it.isNotEmpty()) {
+                                peihr = it
+                            }
+                            val result = peihr.ifEmpty { LOCAL_PEIHR }
+                            parsePeiHr(result)
+                        }
+                        this.getString("aiec").also {
+                            if (it.isNotEmpty()) {
+                                aiec = it
+                            }
+                            val result = aiec.ifEmpty { LOCAL_AIEC }
+                            parseAiec(result)
+                        }
+                        foxFbDataLoadedFinished = true
+                    }
+                    .addOnFailureListener {
+                        if (this@foxLoadFb) {
+                            //加载失败，则再加载一次
+                            false.foxLoadFb()
+                        }
+                    }
+            }
+        } catch (e: Exception) {
+            if (this@foxLoadFb) {
+                //加载失败，则再加载一次
+                false.foxLoadFb()
+            }
+        }
     }
 }

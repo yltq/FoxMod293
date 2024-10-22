@@ -106,7 +106,6 @@ object NetManager {
                             "&cloy=$cloy")
                     if(response.status.isSuccess()) {
                         togging = response.bodyAsText()
-                        toFoxPrint("cloak is $togging")
                     }
                 } catch (e: ClientRequestException) {
                     toFoxPrint("Client error: ${e.response.status}")

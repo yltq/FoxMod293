@@ -79,7 +79,9 @@ class MainActivity : BaseActivity() {
 
     override fun onBackPressed() {
         if (model.state.value == BaseService.State.Connecting) return
-        super.onBackPressed()
+//        super.onBackPressed()
+        moveTaskToBack(true)
+        if (false)  super.onBackPressed()
     }
 
     override fun onResume() {

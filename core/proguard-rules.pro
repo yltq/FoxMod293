@@ -14,7 +14,7 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
--keepattributes !SourceFile,LineNumberTable
+-keepattributes LineNumberTable
 
 -dontwarn lombok.Generated
 -dontwarn org.slf4j.impl.StaticLoggerBinder

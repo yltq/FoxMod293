@@ -298,81 +298,98 @@ class VpnManager : ViewModel(), ShadowsocksConnection.Callback {
     }
 
     override fun stateChanged(state: BaseService.State, profileName: String?, msg: String?) {
-        changeState(state)
+        when(state) {
+            BaseService.State.Connected -> {
+                changeState(state)
+            }
+            BaseService.State.Stopped -> {
+                changeState(state)
+            }
+            else -> {}
+        }
     }
 
     override fun onServiceConnected(service: IShadowsocksService) {
-        changeState(
-            try {
-                BaseService.State.entries[service.state]
-            } catch (_: RemoteException) {
-                BaseService.State.Idle
+        val state = try {
+            BaseService.State.entries[service.state]
+        } catch (_: RemoteException) {
+            BaseService.State.Stopped
+        }
+        Core.state = state
+        when(state) {
+            BaseService.State.Connected -> {
+                this.state.postValue(state)
+                if (Core.connectTime == 0L) {
+                    Core.connectTime = System.currentTimeMillis()
+                }
             }
-        )
+            BaseService.State.Stopped -> {
+                this.state.postValue(state)
+            }
+            else -> {}
+        }
     }
 
     override fun onServiceDisconnected() {
-        changeState(BaseService.State.Idle)
+        Core.state = BaseService.State.Stopped
+        this.state.postValue(BaseService.State.Stopped)
     }
 
     private fun changeState(state: BaseService.State) {
-        if (Core.state != state) {
-            Core.state = state
-            runCatching {
-                if (state.canStop) {
-                    IVBACKRST_KEY.foxLoad()
-                    IVCNT_KEY.foxPb().apply {
-                        when(this) {
-                            true -> {
-                                this@VpnManager.state.postValue(state)
-                                Core.connectTime = System.currentTimeMillis()
-                                DataManager.connectIp = connectServer.ip
-                                activity.startActivity(Intent(activity, ResultActivity::class.java))
-                            }
-                            false -> {
-                                activity.lifecycleScope.launch {
-                                    IVCNT_KEY.foxLoad()
-                                    for (i in 0 until 90) {
-                                        delay(100)
-                                        if (IVCNT_KEY.foxAdEnable()) break
-                                    }
-                                    if (IVCNT_KEY.foxAdEnable()) {
-                                        IVCNT_KEY.foxShow(activity, dismiss = {
-                                            activity.lifecycleScope.launch {
-                                                IVCNT_KEY.foxLoad()
-                                                this@VpnManager.state.postValue(state)
-                                                Core.connectTime = System.currentTimeMillis()
-                                                DataManager.connectIp = connectServer.ip
-                                                delay(300)
-                                                if (activity.baseFoxVisible) activity.startActivity(Intent(activity, ResultActivity::class.java))
-                                            }
-                                        })
-                                    } else {
-                                        this@VpnManager.state.postValue(state)
-                                        Core.connectTime = System.currentTimeMillis()
-                                        DataManager.connectIp = connectServer.ip
-                                        if (activity.baseFoxVisible) activity.startActivity(Intent(activity, ResultActivity::class.java))
-                                    }
+        Core.state = state
+        runCatching {
+            if (state.canStop) {
+                IVBACKRST_KEY.foxLoad()
+                IVCNT_KEY.foxPb().apply {
+                    when(this) {
+                        true -> {
+                            this@VpnManager.state.postValue(state)
+                            Core.connectTime = System.currentTimeMillis()
+                            DataManager.connectIp = connectServer.ip
+                            activity.startActivity(Intent(activity, ResultActivity::class.java))
+                        }
+                        false -> {
+                            activity.lifecycleScope.launch {
+                                IVCNT_KEY.foxLoad()
+                                for (i in 0 until 90) {
+                                    delay(100)
+                                    if (IVCNT_KEY.foxAdEnable()) break
+                                }
+                                if (IVCNT_KEY.foxAdEnable()) {
+                                    IVCNT_KEY.foxShow(activity, dismiss = {
+                                        activity.lifecycleScope.launch {
+                                            IVCNT_KEY.foxLoad()
+                                            this@VpnManager.state.postValue(state)
+                                            Core.connectTime = System.currentTimeMillis()
+                                            DataManager.connectIp = connectServer.ip
+                                            delay(300)
+                                            if (activity.baseFoxVisible) activity.startActivity(Intent(activity, ResultActivity::class.java))
+                                        }
+                                    })
+                                } else {
+                                    this@VpnManager.state.postValue(state)
+                                    Core.connectTime = System.currentTimeMillis()
+                                    DataManager.connectIp = connectServer.ip
+                                    if (activity.baseFoxVisible) activity.startActivity(Intent(activity, ResultActivity::class.java))
                                 }
                             }
                         }
                     }
-
-                } else if (state == BaseService.State.Stopped && stop) {
-                    stop = false
-                    IVBACKRST_KEY.foxLoad()
-                    when(activity.baseFoxVisible) {
-                        false -> {}
-                        true -> {
-                            result.launch(Intent(activity, ResultActivity::class.java))
-                        }
-                    }
-                } else {
-                    this.state.postValue(state)
                 }
+
+            } else if (state == BaseService.State.Stopped && stop) {
+                stop = false
+                this.state.postValue(state)
+                IVBACKRST_KEY.foxLoad()
+                when(activity.baseFoxVisible) {
+                    false -> {}
+                    true -> {
+                        result.launch(Intent(activity, ResultActivity::class.java))
+                    }
+                }
+            } else {
+                this.state.postValue(state)
             }
-        } else {
-            this.state.postValue(state)
         }
     }
 }
