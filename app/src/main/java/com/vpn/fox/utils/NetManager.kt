@@ -96,7 +96,7 @@ object NetManager {
                         packageInfo.versionName // 获取版本名称
                     } catch (e: PackageManager.NameNotFoundException) {
                         e.printStackTrace()
-                        "1.1"
+                        "1.1.0"
                     }
                 }
                 try {
