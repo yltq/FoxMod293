@@ -15,6 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VpnApp"
         tools:ignore="LockedOrientationActivity">
+        <property
+            android:name="android.adservices.AD_SERVICES_CONFIG"
+            android:resource="@xml/gma_ad_services_config"
+            tools:replace="android:resource" />
         <activity
             android:name=".StartActivity"
             android:exported="true"
